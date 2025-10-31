@@ -8,8 +8,8 @@ import { useCreateRoleNotificationMutation, useLazyDriverSearchQuery, useLazyTra
 import RoleNotificationModal from "../Component/Modal/RoleNotificationModal"
 import toast from "react-hot-toast";
 
-const DriverTravels = () => {
-  const [activeButton, setActiveButton] = useState('driver');
+const Travelss = () => {
+  const [activeButton, setActiveButton] = useState('travels');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [length, setlength] = useState(0);
   const [travellength, settravellength] = useState(0);
@@ -240,4 +240,4 @@ const travelsData = searchTerm.length > 0 && searchTravelData?.travels.length > 
   );
 };
 
-export default DriverTravels;
+export default Travelss;

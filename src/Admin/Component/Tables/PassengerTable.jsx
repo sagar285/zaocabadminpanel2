@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Edit, PlusIcon, BellIcon, Eye, Users, MapPin, Phone, Calendar, Ban, UserCheck, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
+import { useChangeUserRoleMutation, useGetPassengerQuery } from "../../Redux/Api";
 
 // Mock data for passengers with driver-like structure
 const mockPassengerData = [
@@ -470,20 +471,29 @@ const PassengerTable = ({
   const [selectedPassenger, setSelectedPassenger] = useState(null);
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
+   const [changeUserRole] = useChangeUserRoleMutation();
   const [role, setRole] = useState("passenger");
+  const { data, error, isLoading, refetch }= useGetPassengerQuery({
+    page,
+    limit,
+  })
+
+  console.log(PassengersData,"jjjjjjjjjjjjjj",data?.data)
 
   // Filter passengers based on search term
   const filteredPassengers = useMemo(() => {
-    const dataToFilter = PassengersData?.length > 0 ? PassengersData : mockPassengerData;
+    const dataToFilter = PassengersData?.length > 0 ? PassengersData : data?.data;
     
     if (!searchTerm.trim()) {
       return dataToFilter;
     }
     
     const searchLower = searchTerm.toLowerCase();
+    console.log(dataToFilter,"data to filter")
     return dataToFilter.filter(passenger => {
+      console.log(passenger,"passenger jjjjjjjjjjjj")
       const fullName = `${passenger?.firstName || ''} ${passenger?.lastName || ''}`.toLowerCase();
-      const phone = passenger?.phoneNumber || '';
+      const phone = passenger?.phoneNumber || passenger?.phone;
       const city = passenger?.user?.city?.toLowerCase() || '';
       const state = passenger?.user?.state?.toLowerCase() || '';
       const status = passenger?.verified ? 'verified' : 'pending';
@@ -498,15 +508,18 @@ const PassengerTable = ({
         vehicleNumber.includes(searchTerm)
       );
     });
-  }, [PassengersData, searchTerm]);
+  }, [PassengersData, searchTerm,data]);
+
+
 
   // Pagination for filtered results
-  const totalPassengers = filteredPassengers.length;
+  const totalPassengers = filteredPassengers?.length;
   const totalPages = Math.ceil(totalPassengers / limit);
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
-  const currentPassengers = filteredPassengers.slice(startIndex, endIndex);
+  const currentPassengers = filteredPassengers?.slice(startIndex, endIndex);
 
+  console.log(currentPassengers,"currentPassengers currentPassengers")
   // Update length when filtered data changes
   useEffect(() => {
     if (setlength) {
@@ -564,15 +577,38 @@ const PassengerTable = ({
     toast.info(`Add wallet for ${passenger.firstName}`);
   };
 
-  const userRoleChangeApi = (e, passenger) => {
-    const newRole = e.target.value;
-    toast.success(`${passenger.firstName}'s role changed to ${newRole}!`);
-    setRole("passenger");
-    console.log('Role change:', { passenger: passenger._id, newRole });
+  // const userRoleChangeApi = (e, passenger) => {
+  //   const newRole = e.target.value;
+  //   toast.success(`${passenger.firstName}'s role changed to ${newRole}!`);
+  //   setRole("passenger");
+  //   console.log('Role change:', { passenger: passenger._id, newRole });
+  // };
+
+  const userRoleChangeApi = async (e, driver) => {
+    console.log(e.target.value,driver,"ooooooooooo")
+    try {
+      const postdata = {
+        userId: driver._id,
+        role:  e.target.value
+      };
+      const { data, error } = await changeUserRole(postdata);
+console.log("api callll")
+  
+    console.log("kkkkkkkkkkhhhhhhhh")
+    console.log(data,error)
+  console.log("uuuuuuuu")
+  //  console.log(data,error,"kkkkkkkkkkkk")
+  //   toast.success("Role changed successfully!");
+    // setRole("driver");
+    // refetch();
+    // window.location.reload();
+  } catch (error) {
+      console.log(error)
+  }
   };
 
   // Empty state when no search results
-  if (searchTerm && filteredPassengers.length === 0) {
+  if (searchTerm && filteredPassengers?.length === 0) {
     return (
       <div className="text-center py-12">
         <Search className="mx-auto h-12 w-12 text-gray-400" />
@@ -588,7 +624,7 @@ const PassengerTable = ({
   }
 
   // Empty state when no data at all
-  if (!searchTerm && filteredPassengers.length === 0) {
+  if (!searchTerm && filteredPassengers?.length === 0) {
     return (
       <div className="text-center py-12">
         <Users className="mx-auto h-12 w-12 text-gray-400" />
@@ -619,7 +655,7 @@ const PassengerTable = ({
           </tr>
         </thead>
         <tbody>
-          {currentPassengers.map((passenger, index) => {
+          {currentPassengers?.map((passenger, index) => {
             // Determine the status for styling - same logic as driver table
             const status = passenger?.verified ? "Verified" : "Pending";
             
@@ -651,7 +687,7 @@ const PassengerTable = ({
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
                   {passenger?.firstName} {passenger?.lastName}<br/>
-                  <span className="text-blue-600">{passenger?.phoneNumber || "7676755676"}</span>
+                  <span className="text-blue-600">{passenger?.phone || "7676755676"}</span>
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                   {passenger?.vehicle?.vehicleNumber || (index % 2 === 0 ? "08" : "07")}
@@ -726,9 +762,10 @@ const PassengerTable = ({
                         value={role}
                         onChange={(e) => { setRole(e.target.value); userRoleChangeApi(e, passenger); }}
                       >
-                        <option value="passenger">Role</option>
-                        <option value="passenger">Passenger</option>
-                        <option value="premium">Premium</option>
+                            <option value="driver">Role</option>
+                        <option value="driver">Driver</option>
+                        <option value="travelOwner">Travel</option>
+                        <option value="Passenger">Passenger</option>
                       </select>
                     </div>
                   </div>
@@ -740,7 +777,7 @@ const PassengerTable = ({
       </table>
 
       {/* Pagination Controls - same as driver table */}
-      {filteredPassengers.length > 0 && (
+      {filteredPassengers?.length > 0 && (
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}

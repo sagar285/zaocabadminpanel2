@@ -68,6 +68,7 @@ import ReportManagementSystem from "./Admin/Component/Report/AddReportReason.jsx
 import MembershipList from "./Admin/Component/Passenger/MembershipList.jsx";
 import FollowersList from "./Admin/Component/Passenger/FollowersList.jsx";
 import FollowingList from "./Admin/Component/Passenger/FollowingList.jsx";
+import Travels from "./Admin/pages/Travels.jsx";
 
 const App = () => {
   return (
@@ -78,10 +79,18 @@ const App = () => {
 
       <Route path="/addFare/perkm" element={<PerKmFareManagement />} />
       <Route
-        path="/driver-travels"
+        path="/drivers"
         element={
           <Provider>
             <DriverTravels />
+          </Provider>
+        }
+      />
+      <Route
+        path="/travels"
+        element={
+          <Provider>
+            <Travels  />
           </Provider>
         }
       />

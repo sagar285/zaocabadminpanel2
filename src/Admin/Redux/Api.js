@@ -17,6 +17,13 @@ export const apiSlice = createApi({
       }),
     }),
 
+    getPassenger: builder.query({
+      query: ({ page = 1, limit = 10 } = {}) => ({
+        url: "/admin/getPassenger",
+      params: { page, limit },
+      }),
+    }),
+
     getDriverById: builder.query({
       query: (id) => ({
         url: `/driver/viewDriverInfo/${id}`,
@@ -495,6 +502,13 @@ editVechileCategory:builder.mutation({
   TravelSearch: builder.query({
     query: (searchTern) => ({
       url: "admin/SearchTravels/search",
+      params: { search: searchTern },
+    }),
+  }),
+
+  PassengerSearch: builder.query({
+    query: (searchTern) => ({
+      url: "admin/SearchPassenger/search",
       params: { search: searchTern },
     }),
   }),
@@ -1182,27 +1196,14 @@ query:({id,updatedData })=>({
   body:updatedData
 })
 })
-
-
-
-
-
   }),
-
-
-
 });
 
 
 
-
-
-
-    
-  
-
-
 export const {
+  useGetPassengerQuery,
+  useLazyPassengerSearchQuery,
   useCreateSeatConfigMutation,
   useGetpercentagecutQuery,
   useAddpercentagecutMutation,

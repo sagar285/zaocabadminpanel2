@@ -643,7 +643,7 @@ const Dashboard = () => {
   const { data } = useGetDashboardQuery();
   const { data: verifiedDriver } = useGetVerifiedDriversQuery();
   const { data: verifiedTravels } = useGetVerifiedTravelsQuery();
-  console.log(data)
+  console.log(data,"get dashboard query")
   
   // Top Summary Cards Data
   const topSummaryData = [

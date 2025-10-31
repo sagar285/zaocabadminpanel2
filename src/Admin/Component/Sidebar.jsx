@@ -97,8 +97,8 @@ const menuItems = [
     isDropdown: true,
     children: [
       { title: 'Passengers', icon: UserCircle, path: '/passenger-travels' },
-      { title: 'Drivers', icon: UserCheck, path: '/driver-travels' },
-      { title: 'Travels', icon: Building, path: '/driver-travels' }
+      { title: 'Drivers', icon: UserCheck, path: '/drivers' },
+      { title: 'Travels', icon: Building, path: '/travels' }
     ]
   },
     {

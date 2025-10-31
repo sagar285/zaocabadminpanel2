@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Search, Plus, Users, Bell } from "lucide-react";
 import Sidebar from "../Sidebar";
 import PassengerTable from "../Tables/PassengerTable"; // Import the PassengerTable component
+import { useLazyPassengerSearchQuery } from "../../Redux/Api";
 
 const Passenger = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -10,10 +11,14 @@ const Passenger = () => {
   const [limit, setLimit] = useState(10);
   const [notificationModal, setNotificationModal] = useState(false);
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
+    const [travelSearch, { data: searchTravelData }] = useLazyPassengerSearchQuery();
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+    console.log(searchTravelData,"seieeeeee")
+
+    const handleSearch = (e) => {
+      setSearchTerm(e.target.value);
+        travelSearch(e.target.value);
+    };
 
   const handleLimitChange = (e) => {
     setLimit(Number(e.target.value));
@@ -30,6 +35,8 @@ const Passenger = () => {
   const clearSearch = () => {
     setSearchTerm("");
   };
+
+  const travelsData = searchTerm.length > 0 && searchTravelData?.travels.length > 0 ? searchTravelData?.travels : []; 
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -153,7 +160,7 @@ const Passenger = () => {
                 {/* Pass search props to PassengerTable */}
                 <PassengerTable 
                   setlength={setLength}
-                  PassengersData={[]} // Keep empty for using mock data
+                  PassengersData={travelsData} // Keep empty for using mock data
                   limitpage={limit}
                   searchTerm={searchTerm} // Pass search term
                   onSearchResults={(count) => setLength(count)} // Callback for result count

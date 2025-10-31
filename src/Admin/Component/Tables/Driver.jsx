@@ -441,7 +441,7 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
                   {driver?.firstName} {driver?.lastName}<br/>
-                  <span className="text-blue-600">{driver?.phoneNumber || "7676755676"}</span>
+                  <span className="text-blue-600">{driver?.phoneNumber}</span>
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                   {driver?.vehicle?.vehicleNumber || (index % 2 === 0 ? "08" : "07")}
@@ -523,6 +523,7 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
                         <option value="driver">Role</option>
                         <option value="driver">Driver</option>
                         <option value="travelOwner">Travel</option>
+                        <option value="Passenger">Passenger</option>
                       </select>
                     </div>
                   </div>
