@@ -20,7 +20,7 @@ export const apiSlice = createApi({
     getPassenger: builder.query({
       query: ({ page = 1, limit = 10 } = {}) => ({
         url: "/admin/getPassenger",
-      params: { page, limit },
+      params: { page, limit },  
       }),
     }),
 
